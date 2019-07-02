@@ -1,0 +1,13 @@
+  # get http://localhost:3001/notes/2
+  put http://localhost:3001/notes/2
+  # delete http://localhost:3001/notes/2
+
+  # get http://localhost:3001/api/notes
+  # post http://localhost:3001/api/notes HTTP/1.1
+  # content-type: application/json
+
+  # {
+  #   "content": "fourth",
+  #   "id": 4,
+  #   "important": false
+  # }
