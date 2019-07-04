@@ -57,7 +57,6 @@ app.delete('/notes/:id', (req, res) => {
   const newNotes = notes.filter(n => n.id !== id);
   notes = newNotes;
   res.status(204).end();
-  s;
 });
 
 const PORT = process.env.PORT || 3001;
