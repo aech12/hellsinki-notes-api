@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 
-app.use(express.static('./build'));
 app.use(bodyParser.json());
 app.use(cors());
+// app.use(express.static('./build'));
 
 let notes = [
   { content: 'first', id: 1, important: false },
