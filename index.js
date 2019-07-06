@@ -4,35 +4,7 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
-
-const DB_USER = process.env.DB_USER,
-  DB_PASS = process.env.DB_PASS,
-  DB = 'helsinki-app';
-mongoose
-  .connect(
-    `mongodb+srv://${DB_USER}:${DB_PASS}@cluster0-mxckr.mongodb.net/${DB}?retryWrites=true&w=majority`,
-    { useNewUrlParser: true }
-  )
-  .then(() => console.log('DB connected'))
-  .catch(e => console.error(console, 'connection error: ', e));
-const db = mongoose.connection;
-
-const notesSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-  date: Date
-});
-const Note = mongoose.model('Note', notesSchema);
-
-// const firstNote = new Note({
-//   content: 'doing it again',
-//   date: new Date(),
-//   important: true
-// });
-// firstNote.save().then(r=> function(err, firstNote) {
-//   if (err) return console.error(err);
-//   mongoose.connection.close();
-// });
+const Note = require('./models/noteSchema');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -53,14 +25,14 @@ app.get('/api/notes', async (req, res) => {
     const notes = await Note.find({}).map(note => {
       return note;
     });
-    mongoose.connection.close();
+    // mongoose.connection.close();
     res.json(notes);
   } catch (e) {
     res.status(404).json({ e: 'Could not find notes: ', e });
   }
 });
 app.post('/api/notes', async (req, res) => {
-  if (!req.body) {
+  if (!req.body.content) {
     res.status(400).json({ error: 'content missing' });
   }
   const { content, important, id } = req.body;
@@ -72,39 +44,56 @@ app.post('/api/notes', async (req, res) => {
   });
   try {
     const newnote = await note.save();
-    mongoose.connection.close();
+    // mongoose.connection.close();
     res.status(200).json(newnote);
   } catch (e) {
-    res.status(404).json('error: ', e);
+    res.status(404).json(e);
   }
-  res.json(notes);
 });
 
-app.get('/notes/:id', (req, res) => {
-  // const id = Number(req.params.id);
+app.get('/notes/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const note = await Note.findById(id);
+    res.json(note);
+  } catch (e) {
+    res.json(`Could not find: ${e}`);
+  }
+});
+app.put('/notes/:id', async (req, res) => {
   const id = req.params.id;
-  Note.findById({ ObjectId: id }).then(r => console.log(r));
-  mongoose.connection.close();
-  // const note = notes.find(n => n.id === id);
-  // if (note) {
-  //   res.json(note);
-  // } else {
-  //   res.status(404).end();
+
+  try {
+    const note = await Note.findByIdAndUpdate(id);
+    note.important = !note.important;
+    const newnote = await Note.findByIdAndUpdate(id, note);
+    res.json(newnote);
+  } catch (e) {
+    res.json(e);
+  }
+
+  // const {content, important} = req.body
+  // const note = {
+  //   content,
+  //   important
+  // }
+  // try {
+  //   const newnote = await Note.findByIdAndUpdate(id, note, {new: true});
+  //   res.json(newnote);
+  // } catch (e) {
+  //   res.status(404).json(`Could not update: ${e}`);
   // }
 });
-app.put('/notes/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const newNotes = notes.map(n =>
-    n.id !== id ? n : { ...n, important: !n.important }
-  );
-  notes = newNotes;
-  res.json(notes);
-});
-app.delete('/notes/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const newNotes = notes.filter(n => n.id !== id);
-  notes = newNotes;
-  res.status(204).end();
+app.delete('/notes/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const delNote = await Note.findByIdAndRemove(id);
+    res
+      .status(402)
+      .json(`Note "${delNote.content}" from ${delNote}" has been deleted.`);
+  } catch (e) {
+    res.json(`Could not find note: ${e}`);
+  }
 });
 
 const PORT = process.env.PORT || 3001;

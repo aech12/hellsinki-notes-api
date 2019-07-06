@@ -1,6 +1,8 @@
 Helsinki Fullstack Notes List - Backend
 
-Working on:
+Accomplished today:
+
+- Mongodb integration intro
 
 To work on:
 0.3
