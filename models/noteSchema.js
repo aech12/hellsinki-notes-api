@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
 
 const url = process.env.DB_URL;
 
@@ -10,8 +9,15 @@ mongoose
 mongoose.set('useFindAndModify', false);
 
 const notesSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
+  content: {
+    type: String,
+    required: true,
+    minlength: 5
+  },
+  important: {
+    type: Boolean,
+    required: true
+  },
   date: Date
 });
 notesSchema.set('toJSON', {

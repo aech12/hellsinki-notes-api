@@ -1,26 +1,20 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config();
 const Note = require('./models/noteSchema');
 
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('./build'));
 
-let notes = [
-  { content: 'first', id: 1, important: false },
-  { content: 'second', id: 2, important: true },
-  { content: 'third', id: 3, important: true }
-];
-
 app.get('/', (req, res) => {
   res.json('hi');
 });
 
-app.get('/api/notes', async (req, res) => {
+app.get('/api/notes', async (req, res, next) => {
   try {
     const notes = await Note.find({}).map(note => {
       return note;
@@ -28,10 +22,10 @@ app.get('/api/notes', async (req, res) => {
     // mongoose.connection.close();
     res.json(notes);
   } catch (e) {
-    res.status(404).json({ e: 'Could not find notes: ', e });
+    res.status(404).json({ e: `Could not find notes: ${e}` });
   }
 });
-app.post('/api/notes', async (req, res) => {
+app.post('/api/notes', async (req, res, next) => {
   if (!req.body.content) {
     res.status(400).json({ error: 'content missing' });
   }
@@ -47,17 +41,18 @@ app.post('/api/notes', async (req, res) => {
     // mongoose.connection.close();
     res.status(200).json(newnote);
   } catch (e) {
-    res.status(404).json(e);
+    next(e);
   }
 });
 
-app.get('/notes/:id', async (req, res) => {
+app.get('/notes/:id', async (req, res, next) => {
   try {
     const id = req.params.id;
     const note = await Note.findById(id);
     res.json(note);
   } catch (e) {
-    res.json(`Could not find: ${e}`);
+    next(e);
+    // res.json(`Could not find: ${e}`);
   }
 });
 app.put('/notes/:id', async (req, res) => {
@@ -95,6 +90,17 @@ app.delete('/notes/:id', async (req, res) => {
     res.json(`Could not find note: ${e}`);
   }
 });
+
+const errorHandler = (e, req, res, next) => {
+  if (e.name === 'CastError' && e.kind == 'ObjectId') {
+    return res.status(400).send({ error: 'malformatted id' });
+  } else if (e.name === 'ValidationError') {
+    return res.status(400).json({ error: e.message });
+  }
+  // console.error(e);
+  next(e);
+};
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
