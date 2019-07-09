@@ -1,11 +1,4 @@
 const mongoose = require('mongoose');
-const { DB_URL } = require('../utils/config');
-
-mongoose
-  .connect(DB_URL, { useNewUrlParser: true })
-  .then(() => console.log('DB connected'))
-  .catch(e => console.error(console, 'Could not connect to DB: ', e));
-mongoose.set('useFindAndModify', false);
 
 const notesSchema = new mongoose.Schema({
   content: {
