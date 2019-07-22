@@ -1,16 +1,19 @@
+const { info: logInfo, error: logError } = require('./logger');
+
 const reqLogger = (req, res, next) => {
-  console.log('Method:', req.method)
-  console.log('Path:  ', req.path)
-  console.log('Body:  ', req.body)
-  console.log('---')
-  next()
-}
+  logInfo('Method:', req.method);
+  logInfo('Path:  ', req.path);
+  logInfo('Body:  ', req.body);
+  logInfo('----');
+  next();
+};
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: '404 unknown endpoint' })
-}
+  response.status(404).send({ error: '404 unknown endpoint' });
+};
 
 const errorHandler = (e, req, res, next) => {
+  logError(e.messages);
   if (e.name === 'CastError' && e.kind == 'ObjectId') {
     return res.status(400).send({ error: `malformatted id, ${e.message}` });
   } else if (e.name === 'ValidationError') {
@@ -20,4 +23,4 @@ const errorHandler = (e, req, res, next) => {
   next(e);
 };
 
-module.exports = {errorHandler, unknownEndpoint, reqLogger};
+module.exports = { errorHandler, unknownEndpoint, reqLogger };

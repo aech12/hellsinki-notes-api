@@ -1,7 +1,6 @@
-FROM node:jessie
+FROM node:10
 
-# ENV NODE_VERSION 10.16.0
-# ENV DB_TEST
+# ENV NODE_ENV=${NODE_ENV}
 WORKDIR /usr/src/nodeApp-1
 COPY package*.json ./
 

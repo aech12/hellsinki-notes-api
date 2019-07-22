@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  dev:
+    image: node:10
+    volumes:
+      - .:/usr/src/service
+    working_dir: /usr/src/service
+    command: npm start
+  app:
+    container_name: helsinki-dev
+    build: .
+    ports:
+      - 8080:3001
+      - 9229:9229
+    command: npm start
+    links:
+      - mongo
+    # environment:
+    # - NODE_ENV=$NODE_ENV
+    # - DB_USER=$DB_USER
+    # - DB_PASS=$DB_PASS
+    # - DB=$DB
+    # - DB_URL=$DB_URL
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+  #   environment:
+  #     - NODE_ENV=$NODE_ENV
+  #     - DB_USER=$DB_USER
+  #     - DB_PASS=$DB_PASS
+  #     - DB=$DB
+  #     - DB_URL=$DB_URL
+  # mongo_test:
+  #   container_name: mongo_:test
+  #   image: mongo_test
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     POSTGRES_DB: db_test
+  #     POSTGRES_USER: username
+  #     POSTGRES_PASSWORD: $POSTGRES_PW
