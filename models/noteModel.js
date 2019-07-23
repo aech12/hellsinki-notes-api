@@ -10,7 +10,8 @@ const notesSchema = new mongoose.Schema({
     type: Boolean,
     required: true
   },
-  date: Date
+  date: Date,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 notesSchema.set('toJSON', {
   transform: (document, returnedObject) => {

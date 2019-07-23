@@ -1,4 +1,5 @@
 const Note = require('../models/noteModel');
+// const User = require('../models/userModel');
 
 const getNotes = async (req, res) => {
   try {
@@ -16,17 +17,18 @@ const postNotes = async (req, res, next) => {
   if (!req.body.content) {
     res.status(400).json({ error: 'content missing' });
   }
-  const { content, important, id } = req.body;
+  const { content, important } = req.body;
+  // const user = User.findById(userId);
+  // if (!user) {
+  //   console.log('User not found when creating note.');
+  // }
   const note = new Note({
     content,
-    id,
     important: important || false,
     date: new Date()
   });
-  console.log(note);
   try {
     const newnote = await note.save();
-    // console.log('newnote', newnote);
     // mongoose.connection.close();
     res.status(200).json(newnote);
   } catch (e) {
@@ -45,16 +47,20 @@ const getNote = async (req, res, next) => {
   }
 };
 
-const putNote = async (req, res) => {
+const putNote = async (req, res, next) => {
   const id = req.params.id;
   try {
     const note = await Note.findById(id);
-    console.log('note: ', note);
-    note.important = !note.important;
-    const newnote = await Note.findByIdAndUpdate(id, note);
-    res.json(newnote);
+    // console.log('note: ', note);
+    if (note) {
+      note.important = !note.important;
+      const newnote = await Note.findByIdAndUpdate(id, note);
+      res.status(200).json(newnote);
+    } else {
+      res.status(404).end();
+    }
   } catch (e) {
-    res.json(e);
+    next(e);
   }
   // const {content, important} = req.body
   // const note = {
@@ -73,7 +79,7 @@ const delNote = async (req, res) => {
   const id = req.params.id;
   try {
     const delNote = await Note.findByIdAndRemove(id);
-    res.status(402).json(`Deleted note "${delNote.content}" from ${delNote}".`);
+    res.status(204).json(`Deleted note "${delNote.content}" from ${delNote}".`);
   } catch (e) {
     res.json(`Could not find note: ${e}`);
   }
