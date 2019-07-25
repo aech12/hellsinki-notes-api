@@ -5,7 +5,7 @@ const app = express();
 const cors = require('cors');
 const router = express.Router();
 const notesRouter = require('./controllers/notesRouter.js');
-// const usersRouter = require('./controllers/usersRouter.js');
+const usersRouter = require('./controllers/usersRouter.js');
 const {
   errorHandler,
   unknownEndpoint,
@@ -42,10 +42,10 @@ router
   .put(notesRouter.putNote)
   .delete(notesRouter.delNote);
 
-// router
-//   .route('/api/users')
-//   .get(usersRouter.getUsers)
-//   .post(usersRouter.postUser);
+router
+  .route('/api/users')
+  .get(usersRouter.getUsers)
+  .post(usersRouter.postUser);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);

@@ -1,5 +1,5 @@
 const Note = require('../models/noteModel');
-// const User = require('../models/userModel');
+const User = require('../models/userModel');
 
 const getNotes = async (req, res) => {
   try {
@@ -17,15 +17,17 @@ const postNotes = async (req, res, next) => {
   if (!req.body.content) {
     res.status(400).json({ error: 'content missing' });
   }
-  const { content, important } = req.body;
-  // const user = User.findById(userId);
+  const { content, important, userId } = req.body;
+  // const user = await User.findById(userId);
   // if (!user) {
   //   console.log('User not found when creating note.');
   // }
+  // console.log('user', user);
   const note = new Note({
     content,
     important: important || false,
     date: new Date()
+    // user: user.id
   });
   try {
     const newnote = await note.save();
@@ -43,7 +45,6 @@ const getNote = async (req, res, next) => {
     res.json(note);
   } catch (e) {
     next(e);
-    // res.json(`Could not find: ${e}`);
   }
 };
 
@@ -51,7 +52,6 @@ const putNote = async (req, res, next) => {
   const id = req.params.id;
   try {
     const note = await Note.findById(id);
-    // console.log('note: ', note);
     if (note) {
       note.important = !note.important;
       const newnote = await Note.findByIdAndUpdate(id, note);

@@ -1,10 +1,10 @@
 Helsinki Fullstack Notes List - Backend
 
-To work on:
+Issues:
 0.4
 - controllers/notes putNote add {} to id ({id}), now you dont get message of id not found so add that to middleware
 - setup DB for testing in Docker so you run tests there, currently Compose throws "cant connect to mongo" error
-- for some reason test /get notes expect json always fails the first time tests are succesfully run, explore this
+- when adding user w invalid characters, catch blocks activates (it shouldnt) throwing cant set headers after they're send errors
 - use $lookup in mongodb
 
 Accomplished 22-29 July:

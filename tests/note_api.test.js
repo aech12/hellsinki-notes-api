@@ -8,6 +8,7 @@ const api = supertest(app);
 
 describe('/api/notes GET', () => {
   test('/get notes returned as json', async () => {
+    jest.setTimeout(10000);
     await api
       .get('/api/notes')
       .expect(200)
@@ -76,11 +77,12 @@ describe('/notes DELETE', () => {
 });
 
 beforeEach(async () => {
-  await Note.deleteMany({});
-
   const newNotes = helper.mockDb.map(note => new Note(note));
   const savedNotesArray = newNotes.map(note => note.save());
   await Promise.all(savedNotesArray);
+});
+afterEach(async () => {
+  await Note.deleteMany({});
 });
 afterAll(() => {
   mongoose.connection.close();

@@ -11,7 +11,7 @@ const notesSchema = new mongoose.Schema({
     required: true
   },
   date: Date,
-  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 notesSchema.set('toJSON', {
   transform: (document, returnedObject) => {

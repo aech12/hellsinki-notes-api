@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "timers": "false"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",

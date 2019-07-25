@@ -16,12 +16,12 @@ mockDb = [
 usersMock = [
   {
     username: 'firstUser',
-    passwordHash: 'pass1',
+    password: 'pass1',
     name: 'First Fake'
   },
   {
     username: 'secondUser',
-    passwordHash: 'pass2',
+    password: 'pass2',
     name: 'Second Name'
   }
 ];
