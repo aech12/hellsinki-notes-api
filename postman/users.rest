@@ -1,0 +1,13 @@
+  # get http://localhost:3001/notes/5d1f9132441b18159c972d71!
+  # put http://localhost:3002/notes/5d059d9cacef2012bac3d84d
+  # delete http://localhost:3001/notes/5d23864ed7cce70904309f68
+
+  # get http://localhost:3002/api/users
+  # post http://localhost:3002/api/users HTTP/1.1
+  # content-type: application/json
+
+  # {
+  #   "username": "passIsJSON",
+  #   "password": "JSON",
+  #   "name": "Tes Json"
+  # }
