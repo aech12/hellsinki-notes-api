@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app.js');
 const Note = require('../models/noteModel');
+const User = require('../models/userModel');
 const helper = require('./test_helper');
 
 const api = supertest(app);
@@ -29,7 +30,7 @@ describe('/api/notes GET', () => {
 });
 
 describe('/api/notes POST', () => {
-  test('/post note was added to the db', async () => {
+  test('add note to db (no user)', async () => {
     const newNote = await api
       .post('/api/notes')
       .send({ content: 'fourth' })
@@ -38,6 +39,22 @@ describe('/api/notes POST', () => {
     expect(newNote.body.important).toBe(false);
     expect(resp.body.length).toBe(helper.mockDb.length + 1);
     expect(resp.body.map(note => note.content)).toContain('fourth');
+  });
+  test('add note to db (with user)', async () => {
+    let user = new User({
+      username: 'addNoteToThis',
+      password: 'addNoteToThis',
+      name: 'addNoteToThis User'
+    });
+    await user.save();
+    const newNote = await api
+      .post('/api/notes')
+      .send({ content: 'fourthWithUser', userId: user.id })
+      .expect(200);
+    resp = await api.get('/api/notes').expect(200);
+    expect(newNote.body.important).toBe(false);
+    expect(resp.body.length).toBe(helper.mockDb.length + 1);
+    expect(resp.body.map(note => note.content)).toContain('fourthWithUser');
   });
   test('/post empty content wont save', async () => {
     let resp, resp2;
@@ -83,6 +100,7 @@ beforeEach(async () => {
 });
 afterEach(async () => {
   await Note.deleteMany({});
+  await User.deleteMany({});
 });
 afterAll(() => {
   mongoose.connection.close();

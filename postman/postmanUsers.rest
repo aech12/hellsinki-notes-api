@@ -3,11 +3,11 @@
   # delete http://localhost:3001/notes/5d23864ed7cce70904309f68
 
   # get http://localhost:3002/api/users
-  post http://localhost:3002/api/users HTTP/1.1
-  content-type: application/json
+  # post http://localhost:3002/api/users HTTP/1.1
+  # content-type: application/json
 
-  {
-    "username": "tes :!t2",
-    "password": "tester12",
-    "name": "Tes 2"
-  }
+  # {
+  #   "username": "tester267",
+  #   "password": "26",
+  #   "name": "Tes 4"
+  # }

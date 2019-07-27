@@ -4,7 +4,10 @@ const zxcvbn = require('zxcvbn');
 
 const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find({});
+    const users = await User.find({}).populate('notes', {
+      content: 1,
+      date: 1
+    });
     res.json(users.map(user => user));
   } catch (e) {
     next(e);
@@ -19,8 +22,6 @@ const postUser = async (req, res, next) => {
     }
     // console.log('PASSWORD STRENGHT: ', zxcvbn(password).score);
     const saltRounds = 10;
-    // zxcvbn(password);
-    // let reg = /[^a-zA-Z0-9]/
     const passwordHash = await bcrypt.hash(password, saltRounds);
     const user = new User({
       username,

@@ -3,8 +3,9 @@ const User = require('../models/userModel');
 
 const getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({}).map(note => {
-      return note;
+    const notes = await Note.find({}).populate('user', {
+      username: 1,
+      name: 1
     });
     // mongoose.connection.close();
     res.json(notes);
@@ -18,23 +19,33 @@ const postNotes = async (req, res, next) => {
     res.status(400).json({ error: 'content missing' });
   }
   const { content, important, userId } = req.body;
-  // const user = await User.findById(userId);
-  // if (!user) {
-  //   console.log('User not found when creating note.');
-  // }
-  // console.log('user', user);
-  const note = new Note({
-    content,
-    important: important || false,
-    date: new Date()
-    // user: user.id
-  });
+
+  let saveWithUser = async (userId, note, newnote) => {
+    let user = await User.findById(userId);
+    note.user = user.id;
+    newnote = await note.save();
+    user.notes = user.notes.concat(newnote.id);
+    await user.save();
+    return newnote;
+  };
+
   try {
-    const newnote = await note.save();
+    const note = new Note({
+      content,
+      important: important || false,
+      date: new Date()
+    });
+    let newnote;
+    if (userId) {
+      newnote = await saveWithUser(userId, note, newnote);
+    } else {
+      newnote = await note.save();
+    }
     // mongoose.connection.close();
     res.status(200).json(newnote);
   } catch (e) {
     next(e);
+    // res.error(e);
   }
 };
 

@@ -6,6 +6,7 @@ Issues:
 - setup DB for testing in Docker so you run tests there, currently Compose throws "cant connect to mongo" error
 - when adding user w invalid characters, catch blocks activates (it shouldnt) throwing cant set headers after they're send errors
 - use $lookup in mongodb
+- currently you cant post notes withouth a userId
 
 Accomplished 22-29 July:
 
