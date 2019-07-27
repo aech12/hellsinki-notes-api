@@ -7,7 +7,7 @@
   # content-type: application/json
 
   # {
-  #   "username": "tester267",
-  #   "password": "26",
-  #   "name": "Tes 4"
+  #   "username": "passIsJSON",
+  #   "password": "JSON",
+  #   "name": "Tes Json"
   # }

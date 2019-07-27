@@ -3,11 +3,11 @@
   # delete http://localhost:3001/notes/5d23864ed7cce70904309f68
 
   # get http://localhost:3002/api/notess
-  # post http://localhost:3002/api/notes HTTP/1.1
-  # content-type: application/json
+  post http://localhost:3002/api/notes HTTP/1.1
+  content-type: application/json
 
-  # {
-  #   "content": "0.4.6 NO user 345",
-  #   "important": true,
-  #   "userId": "5d38b5762872850560798db3"
-  # }
+  {
+    "content": "0.4.6 NO user 345",
+    "important": true,
+    "userId": "5d38b5762872850560798db3"
+  }

@@ -6,6 +6,7 @@ const cors = require('cors');
 const router = express.Router();
 const notesRouter = require('./controllers/notesRouter.js');
 const usersRouter = require('./controllers/usersRouter.js');
+const loginRouter = require('./controllers/loginRouter.js');
 const {
   errorHandler,
   unknownEndpoint,
@@ -46,6 +47,8 @@ router
   .route('/api/users')
   .get(usersRouter.getUsers)
   .post(usersRouter.postUser);
+
+router.route('/login').post(loginRouter.login);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);

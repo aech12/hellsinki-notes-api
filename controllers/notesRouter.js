@@ -1,5 +1,6 @@
 const Note = require('../models/noteModel');
 const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
 
 const getNotes = async (req, res) => {
   try {
@@ -20,7 +21,7 @@ const postNotes = async (req, res, next) => {
   }
   const { content, important, userId } = req.body;
 
-  let saveWithUser = async (userId, note, newnote) => {
+  const saveWithUser = async (userId, note, newnote) => {
     let user = await User.findById(userId);
     note.user = user.id;
     newnote = await note.save();
@@ -28,8 +29,26 @@ const postNotes = async (req, res, next) => {
     await user.save();
     return newnote;
   };
+  const getTokenFromAUTH = req => {
+    const auth = req.get('authorization');
+    if (auth && auth.toLowerCase().startsWith('bearer ')) {
+      return auth.substring(7);
+    }
+    return null;
+  };
 
   try {
+    const token = getTokenFromAUTH(req);
+    let verifiedToken;
+    if (token) {
+      verifiedToken = await jwt.verify(token, process.env.SECRET_KEY);
+    }
+    if (!token || !verifiedToken.id) {
+      console.log(
+        'User is NOT verified by JSON Token! Notes will be saved as anonymous'
+      );
+    }
+
     const note = new Note({
       content,
       important: important || false,
